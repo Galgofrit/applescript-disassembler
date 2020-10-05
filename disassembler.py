@@ -48,6 +48,7 @@ def main():
         else:
             print('<empty or unknown>')
         code = bytearray(function[CODE_OFFSET + 1].value)
+        #  code.replace(b'\x00', b'')
 
         def word():
             r = struct.unpack(">H", code[state['pos']:state['pos'] + 2])[0]
@@ -74,7 +75,7 @@ def main():
             if op == 'Jump':
                 print(hex(state['pos'] + word()), end=' ')
             elif op == 'PushLiteral':
-                print(c & 0xf, '#', literal(c & 0xf), end=' ')
+                print(c & 0xf, '#', str(literal(c & 0xf)).replace('\\x00', ''), end=' ')
             elif op == 'PushLiteralExtended':
                 v = word()
                 print(v, '#', literal(v), end=' ')
@@ -148,7 +149,7 @@ def main():
                 print(hex(state['pos'] + word()), end=' ')
             elif op == 'MessageSend':
                 v = word()
-                print(v, '#', literal(v), end=' ')
+                print(v, '#', (str(literal(v)).replace('\\x00', '')), end=' ')
             elif op == 'StoreResult':
                 pass
             elif op == 'PositionalMessageSend':
